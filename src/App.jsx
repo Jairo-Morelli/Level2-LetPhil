@@ -4,31 +4,18 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 //using axios in this
-import api from "./api";
-
-/* 
-  Some notes, it seems that react is every asynchronous.
-*/
-
-let isOn=false;
+import api from "./api"; 
+import API from "./api.jsx"
 
 
-/*function component, that has a prop */
-function Returnhtml({isOn})
+
+function Returndata({isOn})
 {
   if(isOn==true)
   {
-    return <li>return html prop value was true</li>;
+    return <li>loaded</li>;
   }else{
     return null;
-  }
-}
-
-function cat({data,dataRecieved})
-{
-  if(dataRecieved == true)
-  {
-    return <li></li>
   }
 }
 
@@ -37,7 +24,8 @@ function App() {
   // data isn't the array, it is the index of the array.
   const [data, setData] = useState(0)
   // you can also use state for conditional rendering 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
 
 // can I call the api multiple times 
 // and have it saved into my data array.
@@ -48,48 +36,49 @@ useEffect(() => {
     
     
     setData([response.data]);
-    setIsLoading(false);
+    setIsLoading(true);
 
   })
   .catch(error => console.error("API error:", error));
-}, []);
-
-
-
-useEffect(() => {
-  api.get("https://cataas.com/cat")
-  
-  .then(response => {
-
-    setData((prev)=>[...prev,response.data]);
-    setIsLoading(false);
-  })
-
-  .catch(error => console.error("API error:", error));
-}, []);
-
-/*If you leave the dependecy list parameter empty
-useEffect will be stuck in an infinite loop and it 
-will keep executing whatever code you have in it. */
-useEffect(() => {
-  api.get("https://cataas.com/cat")
-
-  .then(response =>
-  {
-    setData((prev) =>[...prev, response.data]);
-    setIsLoading(false);
-  })
-
-  .catch(error => console.error)
 },[]);
 
 
-useEffect(()=> {
-  console.log("Current array:", data);
-}, [data]); // <- runs only when `items changes.
+useEffect(() => {
+  api.get("https://cataas.com/cat")
+  //Here is where the react code, is getting set.
+  .then(response => { 
+    
+    
+    setData(prev=>[...prev,response.data]);
+    setIsLoading(true);
+
+  })
+  .catch(error => console.error("API error:", error));
+},[]);
 
 
-console.log(isLoading);
+
+useEffect(() => {
+  api.get("https://cataas.com/cat")
+  //Here is where the react code, is getting set.
+  .then(response => { 
+    
+    
+    setData(prev=>[...prev,response.data]);
+    setIsLoading(true);
+
+  })
+  .catch(error => console.error("API error:", error));
+},[]);
+
+useEffect(() =>{
+  if(isLoading){
+    console.log(data[0].url);
+  }
+},[isLoading])
+
+
+console.log(data);
 /*1. How can I display multiple different can images. 
      How can I call my useEffect and store multiple images*/
 
@@ -97,9 +86,10 @@ console.log(isLoading);
   return (
     <> 
       <div>
-        <Returnhtml isOn={true}/>
-        <Returnhtml isOn={false}/>
-        <Returnhtml isOn={true}/>
+        <Returndata isOn={isLoading}/>
+        {data[0]&& <img src={data[0].url}/>}
+        <br/>
+        <API isOn={true}/>
       </div>
     </>
   )
