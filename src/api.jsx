@@ -15,8 +15,8 @@ const callAPI = ()=>{
 
   axios.get("https://cataas.com/cat")
 
-  .then(response=>{
 
+  .then(response=>{
     setData([response.data]);
     setIsLoaded(true);
 
@@ -24,12 +24,20 @@ const callAPI = ()=>{
   })
 }
 
-callAPI();
-
-
 useEffect(()=>{
-  console.log("data:" + data);
-},[data])
+    console.log("Component is changing");
+},[data]);
+
+/*
+  Okay jsx is kind of confusing because when you're returning the 
+  jsx, whatever code is in that React function component is constantly 
+  being called okay. 
+*/
+
+if(isLoaded==false)
+{
+callAPI();
+}
 
   return(
     <>
